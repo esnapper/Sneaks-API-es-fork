@@ -34,7 +34,9 @@ module.exports = {
     if (!shoe.resellLinks.goat) {
       callback()
     } else {
-      let apiLink = `http://www.goat.com/web-api/v1/product_variants/buy_bar_data?productTemplateId=${shoe.goatProductId}`;
+      // console.log(`DEV: shoe.goatProductId: ${shoe.goatProductId}`);
+      // let apiLink = `http://www.goat.com/web-api/v1/product_variants/buy_bar_data?productTemplateId=${shoe.goatProductId}`;
+      let apiLink = `https://www.goat.com/web-api/v1/product_variants/buy_bar_data?productTemplateId=${shoe.goatProductId}`;
       let priceMap = {};
 
       try {
@@ -47,32 +49,44 @@ module.exports = {
           http2: true,
         });
         var json = JSON.parse(response.body);
+        // console.log(`DEV: GOT [${json.length}] RESULTS!!`);
         for (var i = 0; i < json.length; i++) {
-          if(json[i].shoeCondition == 'used') continue;
-          if(priceMap[json[i].sizeOption.value]){
-            priceMap[json[i].sizeOption.value] = json[i].lowestPriceCents.amount / 100 < priceMap[json[i].sizeOption.value] ? json[i].lowestPriceCents.amount / 100 : priceMap[json[i].sizeOption.value];
+          const shoeInfo = json[i];
+          if(shoeInfo.shoeCondition == 'used') continue;
+          // if ((shoeInfo.sizeOption.value == 9.5 || shoeInfo.sizeOption.presentation == '9.5') && shoeInfo.stockStatus != 'not_in_stock') {
+          //   console.log(`DEV: shoeCondition = [${shoeInfo.shoeCondition}]`);
+          //   console.log(`DEV: SIZE 9.5 FULL INFO [${i}]`);
+          //   console.log(shoeInfo);
+          // }
+          if (shoeInfo.shoeCondition == 'new_no_defects') {
+            // do nothing
+          }
+          if(priceMap[json[i].sizeOption?.value]){
+            priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 < priceMap[json[i].sizeOption?.value] ? json[i].lowestPriceCents?.amount / 100 : priceMap[json[i].sizeOption?.value];
           }
           else{
-            priceMap[json[i].sizeOption.value] = json[i].lowestPriceCents.amount / 100 ;
+            priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 ;
           }
-
-          
         }
+        // console.log(`DEV: Finished price checking loop`);
         shoe.resellPrices.goat = priceMap;
-        callback()
+        callback();
       } catch (error) {
-        console.log(error);
-        let err = new Error("Could not connect to Goat while searching '" + shoe.styleID + "' Error: ", error)
+        // console.log(error);
+        // let err = new Error("Could not connect to Goat while searching '" + shoe.styleID + "' Error: ", error)
+        let err = `Could not connect to Goat while searching '${shoe.styleID}' Error: ${error}`;
         console.log(err);
-        callback(err)
+        callback(err);
       }
     }
   },
 
   getPictures: async function (shoe, callback) {
     if (!shoe.resellLinks.goat) {
+    // if (true) {
       callback()
     } else {
+      // callback()
       let apiLink = shoe.resellLinks.goat.replace('sneakers', 'web-api/v1/product_templates');
       try {
         const response = await got(apiLink, {
