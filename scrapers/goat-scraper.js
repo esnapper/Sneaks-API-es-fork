@@ -34,7 +34,7 @@ module.exports = {
     if (!shoe.resellLinks.goat) {
       callback()
     } else {
-      // console.log(`DEV: shoe.goatProductId: ${shoe.goatProductId}`);
+      console.log(`DEV: shoe.goatProductId: ${shoe.goatProductId}`);
       // let apiLink = `http://www.goat.com/web-api/v1/product_variants/buy_bar_data?productTemplateId=${shoe.goatProductId}`;
       let apiLink = `https://www.goat.com/web-api/v1/product_variants/buy_bar_data?productTemplateId=${shoe.goatProductId}`;
       let priceMap = {};
@@ -53,6 +53,7 @@ module.exports = {
         for (var i = 0; i < json.length; i++) {
           const shoeInfo = json[i];
           if(shoeInfo.shoeCondition == 'used') continue;
+          // TODO: Would be nice to pass in flag to this API which includes dev logs
           if (shoeInfo.stockStatus != 'not_in_stock') {
             console.log(`DEV: shoeCondition = [${shoeInfo.shoeCondition}]`);
           }
