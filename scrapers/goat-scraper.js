@@ -53,15 +53,17 @@ module.exports = {
         for (var i = 0; i < json.length; i++) {
           const shoeInfo = json[i];
           if(shoeInfo.shoeCondition == 'used') continue;
-          // TODO: Would be nice to pass in flag to this API which includes dev logs
-          // if ((shoeInfo.sizeOption.value == 9.5 || shoeInfo.sizeOption.presentation == '9.5') && shoeInfo.stockStatus != 'not_in_stock') {
+          // TODO: Would be nice to pass in flag to this API which includes dev logs.
+          // if ((shoeInfo.sizeOption.value == 8.5 || shoeInfo.sizeOption.presentation == '8.5') && shoeInfo.stockStatus != 'not_in_stock') {
           //   console.log(`DEV: shoeCondition = [${shoeInfo.shoeCondition}]`);
           //   console.log(`DEV: SIZE 9.5 FULL INFO [${i}]`);
           //   console.log(shoeInfo);
           // }
 
-          // Used if we only want new in box results
-          if (shoeInfo.shoeCondition == 'new_no_defects') {
+          // Used if we only want new w/o defect results
+          // TODO: Would be nice to pass in flag if we only want boxCondition == 'good_condition'
+          // boxCondition: 'good_condition' || 'badly_damaged' || 'missing_lid' || 'no_original_box'
+          if (shoeInfo.shoeCondition == 'new_no_defects' && shoeInfo.boxCondition == 'good_condition') {
             if(priceMap[json[i].sizeOption?.value]){
               priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 < priceMap[json[i].sizeOption?.value] ? json[i].lowestPriceCents?.amount / 100 : priceMap[json[i].sizeOption?.value];
             }
