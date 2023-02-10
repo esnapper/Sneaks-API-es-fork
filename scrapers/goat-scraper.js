@@ -34,7 +34,7 @@ module.exports = {
     if (!shoe.resellLinks.goat) {
       callback()
     } else {
-      console.log(`DEV: shoe.goatProductId: ${shoe.goatProductId}`);
+      // console.log(`DEV: shoe.goatProductId: ${shoe.goatProductId}`);
       // let apiLink = `http://www.goat.com/web-api/v1/product_variants/buy_bar_data?productTemplateId=${shoe.goatProductId}`;
       let apiLink = `https://www.goat.com/web-api/v1/product_variants/buy_bar_data?productTemplateId=${shoe.goatProductId}`;
       let priceMap = {};
@@ -54,22 +54,20 @@ module.exports = {
           const shoeInfo = json[i];
           if(shoeInfo.shoeCondition == 'used') continue;
           // TODO: Would be nice to pass in flag to this API which includes dev logs
-          if (shoeInfo.stockStatus != 'not_in_stock') {
-            console.log(`DEV: shoeCondition = [${shoeInfo.shoeCondition}]`);
-          }
           // if ((shoeInfo.sizeOption.value == 9.5 || shoeInfo.sizeOption.presentation == '9.5') && shoeInfo.stockStatus != 'not_in_stock') {
           //   console.log(`DEV: shoeCondition = [${shoeInfo.shoeCondition}]`);
           //   console.log(`DEV: SIZE 9.5 FULL INFO [${i}]`);
           //   console.log(shoeInfo);
           // }
+
+          // Used if we only want new in box results
           if (shoeInfo.shoeCondition == 'new_no_defects') {
-            // do nothing - this could be used if we only want new in box
-          }
-          if(priceMap[json[i].sizeOption?.value]){
-            priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 < priceMap[json[i].sizeOption?.value] ? json[i].lowestPriceCents?.amount / 100 : priceMap[json[i].sizeOption?.value];
-          }
-          else{
-            priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 ;
+            if(priceMap[json[i].sizeOption?.value]){
+              priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 < priceMap[json[i].sizeOption?.value] ? json[i].lowestPriceCents?.amount / 100 : priceMap[json[i].sizeOption?.value];
+            }
+            else{
+              priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 ;
+            }
           }
         }
         // console.log(`DEV: Finished price checking loop`);
