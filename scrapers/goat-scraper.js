@@ -1,7 +1,7 @@
 const got = require('got');
 const request = require('request');
 
-
+// TODO: Get thumbnail image retrieval working
 
 module.exports = {
   getLink: async function (shoe, callback) {
@@ -53,13 +53,16 @@ module.exports = {
         for (var i = 0; i < json.length; i++) {
           const shoeInfo = json[i];
           if(shoeInfo.shoeCondition == 'used') continue;
+          if (shoeInfo.stockStatus != 'not_in_stock') {
+            console.log(`DEV: shoeCondition = [${shoeInfo.shoeCondition}]`);
+          }
           // if ((shoeInfo.sizeOption.value == 9.5 || shoeInfo.sizeOption.presentation == '9.5') && shoeInfo.stockStatus != 'not_in_stock') {
           //   console.log(`DEV: shoeCondition = [${shoeInfo.shoeCondition}]`);
           //   console.log(`DEV: SIZE 9.5 FULL INFO [${i}]`);
           //   console.log(shoeInfo);
           // }
           if (shoeInfo.shoeCondition == 'new_no_defects') {
-            // do nothing
+            // do nothing - this could be used if we only want new in box
           }
           if(priceMap[json[i].sizeOption?.value]){
             priceMap[json[i].sizeOption?.value] = json[i].lowestPriceCents?.amount / 100 < priceMap[json[i].sizeOption?.value] ? json[i].lowestPriceCents?.amount / 100 : priceMap[json[i].sizeOption?.value];
